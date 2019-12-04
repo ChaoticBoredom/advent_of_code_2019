@@ -1,6 +1,6 @@
 def calc_fuel_load(fuel)
   total_fuel = 0
-  while fuel.positive? do
+  while fuel.positive?
     fuel = fuel / 3 - 2
     break if fuel.negative?
 
