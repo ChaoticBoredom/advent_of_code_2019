@@ -65,5 +65,6 @@ Kernel.loop do
   when 8 then equals(val1, val2, val3)
   else
     puts "UNKNOWN: #{opcode} / #{modes}"
+    break
   end
 end
