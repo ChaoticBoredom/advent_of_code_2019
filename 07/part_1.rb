@@ -86,4 +86,4 @@ outputs = {}
   outputs[key] = e
 end
 
-puts outputs.max_by_key
+puts outputs.max_by { |_, v| v }
