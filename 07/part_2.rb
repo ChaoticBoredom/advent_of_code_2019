@@ -2,13 +2,12 @@ require "pry"
 initial_input = File.open("input.txt") { |i| i.readline.strip.split(",").map(&:to_i) }
 
 def compute(data, ip, input)
-  ip = 0
   output = nil
   Kernel.loop do
     modes = data[ip]
 
     opcode = modes % 100
-    break if opcode == 99
+    return [nil, ip, input] if opcode == 99
 
     c, b, = (modes / 100).digits
 
@@ -32,6 +31,7 @@ def compute(data, ip, input)
       puts "OUTPUT: #{val1}"
       output = val1
       ip += 2
+      return [data, ip, output]
     when 5 then val1.zero? ? ip += 3 : ip = val2
     when 6 then val1.zero? ? ip = val2 : ip += 3
     when 7
@@ -51,15 +51,23 @@ end
 
 outputs = {}
 
-[4, 3, 2, 1, 0].permutation do |phase|
+[5, 6, 7, 8, 9].permutation do |phase|
   key = phase.dup
-  _, _, a = compute(initial_input, 0, [phase.shift, 0])
-  _, _, b = compute(initial_input, 0, [phase.shift, a])
-  _, _, c = compute(initial_input, 0, [phase.shift, b])
-  _, _, d = compute(initial_input, 0, [phase.shift, c])
-  _, _, e = compute(initial_input, 0, [phase.shift, d])
+  da, ia, a = compute(initial_input.dup, 0, [phase.shift, 0])
+  db, ib, b = compute(initial_input.dup, 0, [phase.shift, a])
+  dc, ic, c = compute(initial_input.dup, 0, [phase.shift, b])
+  dd, id, d = compute(initial_input.dup, 0, [phase.shift, c])
+  de, ie, e = compute(initial_input.dup, 0, [phase.shift, d])
 
-  outputs[key] = e
-end;
+  loop do
+    da, ia, a = compute(da, ia, [e])
+    db, ib, b = compute(db, ib, [a])
+    dc, ic, c = compute(dc, ic, [b])
+    dd, id, d = compute(dd, id, [c])
+    de, ie, e = compute(de, ie, [d])
+    outputs[key] = e if e
+    break unless de
+  end
+end
 
 puts outputs.values.max
