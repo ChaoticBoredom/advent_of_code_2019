@@ -1,8 +1,9 @@
 require "pry"
 initial_input = File.open("input.txt") { |i| i.readline.strip.split(",").map(&:to_i) }
 
-def compute(data, input)
+def compute(data, ip, input)
   ip = 0
+  output = nil
   Kernel.loop do
     modes = data[ip]
 
@@ -29,7 +30,7 @@ def compute(data, input)
       ip += 2
     when 4
       puts "OUTPUT: #{val1}"
-      @output = val1
+      output = val1
       ip += 2
     when 5 then val1.zero? ? ip += 3 : ip = val2
     when 6 then val1.zero? ? ip = val2 : ip += 3
@@ -45,20 +46,20 @@ def compute(data, input)
     end
   end
 
-  @output
+  [data, ip, output]
 end
 
 outputs = {}
 
 [4, 3, 2, 1, 0].permutation do |phase|
   key = phase.dup
-  a = compute(initial_input, [phase.shift, 0])
-  b = compute(initial_input, [phase.shift, a])
-  c = compute(initial_input, [phase.shift, b])
-  d = compute(initial_input, [phase.shift, c])
-  e = compute(initial_input, [phase.shift, d])
+  _, _, a = compute(initial_input, 0, [phase.shift, 0])
+  _, _, b = compute(initial_input, 0, [phase.shift, a])
+  _, _, c = compute(initial_input, 0, [phase.shift, b])
+  _, _, d = compute(initial_input, 0, [phase.shift, c])
+  _, _, e = compute(initial_input, 0, [phase.shift, d])
 
   outputs[key] = e
-end
+end;
 
-puts outputs.max_by { |_, v| v }
+puts outputs.values.max
