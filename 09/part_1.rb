@@ -62,3 +62,4 @@ def compute(data, ip, input)
 end
 
 compute(initial_input, 0, [1])
+compute(initial_input, 0, [2])
