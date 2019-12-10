@@ -1,4 +1,8 @@
-@data = File.open("input.txt") { |i| i.readline.strip.split(",").map(&:to_i) }
+require_relative "../intcode"
+
+data = File.open("input.txt") { |i| i.readline.strip.split(",").map(&:to_i) }
+
+@data = data.dup
 
 def add(val1, val2, val3)
   @data[val3] = val1 + val2
@@ -68,3 +72,9 @@ Kernel.loop do
     break
   end
 end
+
+puts "PART 1"
+IntCode.new(data.dup, 0, [1]).compute
+
+puts "PART 2"
+IntCode.new(data.dup, 0, [5]).compute
