@@ -1,7 +1,10 @@
+require_relative "../intcode"
+
 input = File.open("input.txt") { |data| data.readline.strip.split(",").map(&:to_i) }
 
 input[1] = 12
 input[2] = 2
+clean_input = input.dup
 
 input.each_slice(4) do |part|
   puts part.join(",")
@@ -16,3 +19,9 @@ input.each_slice(4) do |part|
 end
 
 puts input[0]
+puts "~~~~" * 15
+
+computer = IntCode.new(clean_input)
+
+computer.compute
+puts computer.data[0]
