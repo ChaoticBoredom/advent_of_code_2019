@@ -1,4 +1,6 @@
 require "pry"
+require_relative "../intcode"
+
 initial_input = File.open("input.txt") { |i| i.readline.strip.split(",").map(&:to_i) }
 
 def compute(data, ip, input)
@@ -71,3 +73,24 @@ outputs = {}
 end
 
 puts outputs.values.max
+
+vals = [5, 6, 7, 8, 9].permutation.map do |phase|
+  computer = IntCode.new(initial_input.dup, 0, [phase.shift, 0])
+  da, ia, a = computer.compute(true)
+  db, ib, b = computer.start_again(initial_input.dup, 0, [phase.shift, a])
+  dc, ic, c = computer.start_again(initial_input.dup, 0, [phase.shift, b])
+  dd, id, d = computer.start_again(initial_input.dup, 0, [phase.shift, c])
+  de, ie, e = computer.start_again(initial_input.dup, 0, [phase.shift, d])
+
+  loop do
+    da, ia, a = computer.start_again(da, ia, [e])
+    db, ib, b = computer.start_again(db, ib, [a])
+    dc, ic, c = computer.start_again(dc, ic, [b])
+    dd, id, d = computer.start_again(dd, id, [c])
+    de, ie, e = computer.start_again(de, ie, [d])
+    break unless de
+  end
+  e
+end
+
+puts vals.max

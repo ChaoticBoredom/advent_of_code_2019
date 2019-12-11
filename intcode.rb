@@ -29,7 +29,7 @@ class IntCode
       when 7 then less_than(val1, val2, val3)
       when 8 then equals(val1, val2, val3)
       when 9 then shift_relative_base(val1)
-      when 99 then return [@data, @ip, @output]
+      when 99 then return [nil, @ip, @output]
       else
         puts "UNKNOWN #{opcode} / #{@ip}"
         break
@@ -37,6 +37,12 @@ class IntCode
     end
 
     @output
+  end
+
+  def restart_with_inputs(inputs)
+    @ip = 0
+    @inputs = inputs
+    compute(true)
   end
 
   def start_again(data, ip, inputs)
