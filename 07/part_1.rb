@@ -93,11 +93,10 @@ puts outputs.max_by { |_, v| v }[1]
 
 vals = [0, 1, 2, 3, 4].permutation.map do |phase|
   computer = IntCode.new(data.dup, 0, [phase.shift, 0])
-  _, _, a = computer.compute
-  _, _, b = computer.restart_with_inputs([phase.shift, a])
-  _, _, c = computer.restart_with_inputs([phase.shift, b])
-  _, _, d = computer.restart_with_inputs([phase.shift, c])
-  _, _, e = computer.restart_with_inputs([phase.shift, d])
-  e
+  a = computer.compute[2]
+  b = computer.restart_with_inputs([phase.shift, a])[2]
+  c = computer.restart_with_inputs([phase.shift, b])[2]
+  d = computer.restart_with_inputs([phase.shift, c])[2]
+  computer.restart_with_inputs([phase.shift, d])[2]
 end
 puts vals.max

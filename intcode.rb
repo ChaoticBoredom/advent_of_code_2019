@@ -42,7 +42,7 @@ class IntCode
   def restart_with_inputs(inputs)
     @ip = 0
     @inputs = inputs
-    compute(true)
+    compute
   end
 
   def start_again(data, ip, inputs)
@@ -92,7 +92,6 @@ class IntCode
   def output(val1)
     @output = @data[val1]
     @ip += 2
-    @output
   end
 
   def true_jump(val1, val2)

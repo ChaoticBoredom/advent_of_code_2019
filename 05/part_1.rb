@@ -74,7 +74,7 @@ Kernel.loop do
 end
 
 puts "PART 1"
-IntCode.new(data.dup, 0, [1]).compute
+puts IntCode.new(data.dup, 0, [1]).compute[2]
 
 puts "PART 2"
-IntCode.new(data.dup, 0, [5]).compute
+puts IntCode.new(data.dup, 0, [5]).compute[2]
