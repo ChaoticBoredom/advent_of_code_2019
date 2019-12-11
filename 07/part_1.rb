@@ -1,4 +1,7 @@
-@data = File.open("input.txt") { |i| i.readline.strip.split(",").map(&:to_i) }
+require_relative "../intcode"
+
+data = File.open("input.txt") { |i| i.readline.strip.split(",").map(&:to_i) }
+@data = data.dup
 
 def add(val1, val2, val3)
   @data[val3] = val1 + val2
@@ -75,7 +78,7 @@ end
 
 outputs = {}
 
-[4, 3, 2, 1, 0].permutation do |phase|
+[0, 1, 2, 3, 4].permutation do |phase|
   key = phase.dup
   a = compute([phase.shift, 0])
   b = compute([phase.shift, a])
@@ -86,4 +89,15 @@ outputs = {}
   outputs[key] = e
 end
 
-puts outputs.max_by { |_, v| v }
+puts outputs.max_by { |_, v| v }[1]
+
+vals = [0, 1, 2, 3, 4].permutation.map do |phase|
+  computer = IntCode.new(data.dup, 0, [phase.shift, 0])
+  modded_data, _, a = computer.compute
+  modded_data, _, b = computer.start_again(modded_data, 0, [phase.shift, a])
+  modded_data, _, c = computer.start_again(modded_data, 0, [phase.shift, b])
+  modded_data, _, d = computer.start_again(modded_data, 0, [phase.shift, c])
+  _, _, e = computer.start_again(modded_data, 0, [phase.shift, d])
+  e
+end
+puts vals.max

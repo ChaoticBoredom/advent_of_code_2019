@@ -9,7 +9,7 @@ class IntCode
     @relative = 0
   end
 
-  def compute(wait_for_input = false)
+  def compute(stop_on_output = false)
     Kernel.loop do
       opcode, a, b, c = modes_data
 
@@ -22,19 +22,21 @@ class IntCode
       when 2 then multiply(val1, val2, val3)
       when 3 then get_input(val1)
       when 4
-        output = output(val1)
-        return [@data, @ip, output] if wait_for_input
+        output(val1)
+        return [@data, @ip, @output] if stop_on_output
       when 5 then true_jump(val1, val2)
       when 6 then false_jump(val1, val2)
       when 7 then less_than(val1, val2, val3)
       when 8 then equals(val1, val2, val3)
       when 9 then shift_relative_base(val1)
-      when 99 then return [nil, @ip, @inputs]
+      when 99 then return [@data, @ip, @output]
       else
         puts "UNKNOWN #{opcode} / #{@ip}"
         break
       end
     end
+
+    @output
   end
 
   def start_again(data, ip, inputs)
@@ -82,9 +84,9 @@ class IntCode
   end
 
   def output(val1)
-    puts "OUTPUT: #{@data[val1]}"
+    @output = @data[val1]
     @ip += 2
-    @data[val1]
+    @output
   end
 
   def true_jump(val1, val2)
