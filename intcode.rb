@@ -1,15 +1,16 @@
 require "pry"
 class IntCode
-  attr_reader :data
+  attr_reader :data, :output, :finished
 
-  def initialize(data, instruction_pointer = 0, inputs = [])
+  def initialize(data)
     @data = data
-    @ip = instruction_pointer
-    @inputs = inputs
+    @ip = 0
+    @inputs = []
     @relative = 0
+    @finished = false
   end
 
-  def compute(stop_on_output = false)
+  def compute(stop_on_output: false, output: false)
     Kernel.loop do
       opcode, a, b, c = modes_data
 
@@ -22,34 +23,37 @@ class IntCode
       when 2 then multiply(val1, val2, val3)
       when 3 then get_input(val1)
       when 4
-        output(val1)
-        return [@data, @ip, @output] if stop_on_output
+        output_data(val1)
+        puts "OUTPUT: #{@output}" if output
+        return self if stop_on_output
       when 5 then true_jump(val1, val2)
       when 6 then false_jump(val1, val2)
       when 7 then less_than(val1, val2, val3)
       when 8 then equals(val1, val2, val3)
       when 9 then shift_relative_base(val1)
-      when 99 then return [nil, @ip, @output]
+      when 99
+        @finished = true
+        return self
       else
         puts "UNKNOWN #{opcode} / #{@ip}"
         break
       end
     end
 
-    @output
+    self
   end
 
-  def restart_with_inputs(inputs)
+  def add_input(input)
+    @inputs << input
+
+    self
+  end
+
+  def reset
     @ip = 0
-    @inputs = inputs
-    compute
-  end
+    @finished = false
 
-  def start_again(data, ip, inputs)
-    @data = data
-    @ip = ip
-    @inputs = inputs
-    compute(true)
+    self
   end
 
   private
@@ -89,7 +93,7 @@ class IntCode
     @ip += 2
   end
 
-  def output(val1)
+  def output_data(val1)
     @output = @data[val1]
     @ip += 2
   end
