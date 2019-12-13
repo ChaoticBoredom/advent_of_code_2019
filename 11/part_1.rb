@@ -31,11 +31,36 @@ until computer.finished
   turn = computer.compute(stop_on_output: true).output
   panels[loc] = colour
 
-  puts "COLOUR: #{colour} TURN: #{turn}"
-
   loc, robot_facing = move_robot(loc, turn, robot_facing)
-  puts loc.join(",")
 end
 
 puts "PART 1"
 puts panels.keys.count
+
+computer = IntCode.new(initial_input.dup)
+
+loc = [0, 0]
+panels = Hash.new(0)
+panels[loc] = 1
+until computer.finished
+  original_colour = panels[loc]
+  colour = computer.add_input(original_colour).compute(stop_on_output: true).output
+  turn = computer.compute(stop_on_output: true).output
+  panels[loc] = colour
+
+  loc, robot_facing = move_robot(loc, turn, robot_facing)
+end
+
+max_x = panels.keys.map(&:first).max + 2
+x_increment = panels.keys.map(&:first).min.abs
+y_increment = panels.keys.map(&:last).min.abs
+
+paint_job = []
+panels.each do |k, v|
+  x, y = k
+  paint_job[y + y_increment] ||= Array.new(max_x + x_increment, " ")
+  paint_job[y + y_increment][x + x_increment] = v.zero? ? " " : "█"
+end
+
+puts "PART 2"
+puts(paint_job.map { |pj| pj.map { |v| v.nil? ? " " : v }.reverse.join })
