@@ -19,8 +19,5 @@ input.each_slice(4) do |part|
 end
 
 puts input[0]
-puts input[0] == 19_690_720
 
-computer = IntCode.new(clean_input)
-computer.compute
-puts computer.data[0]
+puts IntCode.new(clean_input).compute.data[0]

@@ -65,5 +65,5 @@ end
 compute(initial_input.dup, 0, [1])
 compute(initial_input, 0, [2])
 
-puts IntCode.new(initial_input.dup, 0, [1]).compute[2]
-puts IntCode.new(initial_input.dup, 0, [2]).compute[2]
+puts IntCode.new(initial_input.dup).add_input(1).compute.output
+puts IntCode.new(initial_input.dup).add_input(2).compute.output

@@ -75,22 +75,21 @@ end
 puts outputs.values.max
 
 vals = [5, 6, 7, 8, 9].permutation.map do |phase|
-  computer = IntCode.new(initial_input.dup, 0, [phase.shift, 0])
-  da, ia, a = computer.compute(true)
-  db, ib, b = computer.start_again(initial_input.dup, 0, [phase.shift, a])
-  dc, ic, c = computer.start_again(initial_input.dup, 0, [phase.shift, b])
-  dd, id, d = computer.start_again(initial_input.dup, 0, [phase.shift, c])
-  de, ie, e = computer.start_again(initial_input.dup, 0, [phase.shift, d])
+  computer_a = IntCode.new(initial_input.dup).add_input(phase.shift).add_input(0).compute(stop_on_output: true)
+  computer_b = IntCode.new(initial_input.dup).add_input(phase.shift).add_input(computer_a.output).compute(stop_on_output: true)
+  computer_c = IntCode.new(initial_input.dup).add_input(phase.shift).add_input(computer_b.output).compute(stop_on_output: true)
+  computer_d = IntCode.new(initial_input.dup).add_input(phase.shift).add_input(computer_c.output).compute(stop_on_output: true)
+  computer_e = IntCode.new(initial_input.dup).add_input(phase.shift).add_input(computer_d.output).compute(stop_on_output: true)
 
   loop do
-    da, ia, a = computer.start_again(da, ia, [e])
-    db, ib, b = computer.start_again(db, ib, [a])
-    dc, ic, c = computer.start_again(dc, ic, [b])
-    dd, id, d = computer.start_again(dd, id, [c])
-    de, ie, e = computer.start_again(de, ie, [d])
-    break unless de
+    computer_a.add_input(computer_e.output).compute(stop_on_output: true)
+    computer_b.add_input(computer_a.output).compute(stop_on_output: true)
+    computer_c.add_input(computer_b.output).compute(stop_on_output: true)
+    computer_d.add_input(computer_c.output).compute(stop_on_output: true)
+    computer_e.add_input(computer_d.output).compute(stop_on_output: true)
+    break if computer_e.finished
   end
-  e
+  computer_e.output
 end
 
 puts vals.max

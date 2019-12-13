@@ -21,7 +21,4 @@ end
 puts input[0]
 puts "~~~~" * 15
 
-computer = IntCode.new(clean_input)
-
-computer.compute
-puts computer.data[0]
+puts IntCode.new(clean_input).compute.data[0]
