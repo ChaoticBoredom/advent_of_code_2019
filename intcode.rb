@@ -79,12 +79,12 @@ class IntCode
   end
 
   def add(val1, val2, val3)
-    @data[val3] = @data[val1] + @data[val2]
+    @data[val3] = read_param(val1) + read_param(val2)
     @ip += 4
   end
 
   def multiply(val1, val2, val3)
-    @data[val3] = @data[val1] * @data[val2]
+    @data[val3] = read_param(val1) * read_param(val2)
     @ip += 4
   end
 
@@ -94,30 +94,34 @@ class IntCode
   end
 
   def output_data(val1)
-    @output = @data[val1]
+    @output = read_param(val1)
     @ip += 2
   end
 
   def true_jump(val1, val2)
-    @data[val1].zero? ? @ip += 3 : @ip = @data[val2]
+    read_param(val1).zero? ? @ip += 3 : @ip = read_param(val2)
   end
 
   def false_jump(val1, val2)
-    @data[val1].zero? ? @ip = @data[val2] : @ip += 3
+    read_param(val1).zero? ? @ip = read_param(val2) : @ip += 3
   end
 
   def less_than(val1, val2, val3)
-    @data[val3] = @data[val1] < @data[val2] ? 1 : 0
+    @data[val3] = read_param(val1) < read_param(val2) ? 1 : 0
     @ip += 4
   end
 
   def equals(val1, val2, val3)
-    @data[val3] = @data[val1] == @data[val2] ? 1 : 0
+    @data[val3] = read_param(val1) == read_param(val2) ? 1 : 0
     @ip += 4
   end
 
   def shift_relative_base(val1)
-    @relative += @data[val1]
+    @relative += read_param(val1)
     @ip += 2
+  end
+
+  def read_param(val)
+    @data[val] || 0
   end
 end
