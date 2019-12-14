@@ -72,3 +72,30 @@ end
 
 puts "PART 1"
 puts moons.map(&:energy).sum
+
+moons = File.open("input.txt").readlines.map do |m|
+  Moon.new(m.scan(/-?\d+/).map(&:to_i))
+end
+states = [[], [], []]
+300_000.times do
+  states.each.with_index do |_, i|
+    states[i] << [
+      moons[0].position[i],
+      moons[1].position[i],
+      moons[2].position[i],
+      moons[3].position[i],
+      moons[0].velocity[i],
+      moons[1].velocity[i],
+      moons[2].velocity[i],
+      moons[3].velocity[i],
+    ]
+  end
+  step(moons)
+end
+
+period = states.map do |points|
+  points.each_index.select { |i| points[i] == points[0] }[1]
+end
+
+puts "PART 2"
+puts period.inject(:lcm)
