@@ -52,6 +52,8 @@ class IntCode
   def reset
     @ip = 0
     @finished = false
+    @relative = 0
+    @output = nil
 
     self
   end
