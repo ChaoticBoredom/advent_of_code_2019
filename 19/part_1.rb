@@ -3,18 +3,18 @@ require_relative "../intcode"
 
 PROGRAM = File.open("input.txt") { |i| i.readline.strip.split(",").map(&:to_i) }
 
-def tractored?(x, y)
+def tractored?(row, col)
   computer = IntCode.new(PROGRAM.dup)
-  computer.add_input(x)
-  computer.add_input(y)
+  computer.add_input(row)
+  computer.add_input(col)
 
-  computer.compute.output
+  computer.compute.output == 1
 end
 
 count = 0
 (0...50).each do |x|
   (0...50).each do |y|
-    count += tractored?(x, y)
+    count += 1 if tractored?(x, y)
   end
 end
 
@@ -24,26 +24,15 @@ puts count
 origin_x = nil
 origin_y = nil
 
-(0...100_000).each do |x|
-  start_found = false
-  (0...100_000).each do |y|
-    next if tractored?(x, y).zero?
-
-    next if tractored?(x + 100, y).zero?
-    next if tractored?(x, y + 100).zero?
-    next if tractored?(x + 100, y + 100).zero?
-
-    # next if tractored?(x + 50, y).zero?
-    # next if tractored?(x, y + 50).zero?
-    # next if tractored?(x + 1, y).zero?
-    # next if tractored?(x, y + 1).zero?
-
+x = 0
+y = 99
+while origin_x.nil?
+  x += 1 unless tractored?(x, y)
+  if tractored?(x + 99, y - 99)
     origin_x = x
-    origin_y = y
-    break if origin_y
+    origin_y = y - 99
   end
-  puts "next x = #{x}"
-  break if origin_x
+  y += 1 if tractored?(x, y)
 end
 
 puts "PART 2"
