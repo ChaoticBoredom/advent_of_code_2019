@@ -73,8 +73,18 @@ Kernel.loop do
   end
 end
 
+computer = IntCode.new(data.dup).add_input(1).compute
+part1 = Kernel.loop do
+  x = computer.output
+  break x unless x.zero?
+end
 puts "PART 1"
-puts IntCode.new(data.dup).add_input(1).compute.output
+puts part1
 
+computer = IntCode.new(data.dup).add_input(5).compute
+part2 = Kernel.loop do
+  x = computer.output
+  break x unless x.zero?
+end
 puts "PART 2"
-puts IntCode.new(data.dup).add_input(5).compute.output
+puts part2
