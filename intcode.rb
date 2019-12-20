@@ -1,16 +1,18 @@
 require "pry"
 class IntCode
-  attr_reader :data, :output, :finished
+  attr_reader :data, :finished
 
   def initialize(data)
     @data = data
     @ip = 0
     @inputs = []
+    @output = []
+    @paused_value = nil
     @relative = 0
     @finished = false
   end
 
-  def compute(stop_on_output: false, output: false)
+  def compute(stop_on_input: false, stop_on_output: false, output: false)
     Kernel.loop do
       opcode, a, b, c = modes_data
 
@@ -21,7 +23,12 @@ class IntCode
       case opcode
       when 1 then add(val1, val2, val3)
       when 2 then multiply(val1, val2, val3)
-      when 3 then get_input(val1)
+      when 3
+        if stop_on_input
+          @paused_value = val1
+          return self
+        end
+        get_input(val1)
       when 4
         output_data(val1)
         puts "OUTPUT: #{@output}" if output
@@ -49,11 +56,21 @@ class IntCode
     self
   end
 
+  def resume_on_input(input)
+    @inputs << input
+    get_input(@paused_value)
+    compute(stop_on_input: true)
+  end
+
+  def output
+    @output.shift
+  end
+
   def reset
     @ip = 0
     @finished = false
     @relative = 0
-    @output = nil
+    @output = []
 
     self
   end
@@ -96,7 +113,7 @@ class IntCode
   end
 
   def output_data(val1)
-    @output = read_param(val1)
+    @output << read_param(val1)
     @ip += 2
   end
 
